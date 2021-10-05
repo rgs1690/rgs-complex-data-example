@@ -17,8 +17,12 @@ const mergeGroupData = () => new Promise((resolve, reject) => {
   Promise.all([getGroups(), getUserGroups()])
     .then(([groups, userGroupsJoin]) => {
       // COMPLETE THIS FUNCTION
-      console.warn(userGroupsJoin);
-      resolve(groups);
+      const allGroupInfoArray = groups.map((group) => {
+        const groupRelationshipArray = userGroupsJoin.filter((ug) => ug.group_id === group.id);
+        return { ...group, count: groupRelationshipArray.length };
+      });
+      console.warn(allGroupInfoArray);
+      resolve(allGroupInfoArray);
     }).catch((error) => reject(error));
 });
 
