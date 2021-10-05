@@ -8,24 +8,39 @@ const groupsWithUsers = () => new Promise((resolve, reject) => {
   // COMPLETE THIS FUNCTION
   Promise.all([getUsers(), getGroups(), getUserGroups()])
     .then(([users, groups, userGroupsJoin]) => {
-      const allGroupInfoArray = [];
-
-      groups.forEach((group) => {
-        const groupRelationshipArray = [];
-        const userInfoArray = [];
-        // push all the relationships that apply to this group
-        // use the spread to not have an array of arrays
-        // instead an array of objects.
-        groupRelationshipArray.push(...userGroupsJoin.filter((ug) => ug.group_id === group.id));
-
-        groupRelationshipArray.forEach((groupRelationship) => {
-          userInfoArray.push(users.find((user) => user.id === groupRelationship.user_id));
-        });
-        allGroupInfoArray.push({ ...group, users: userInfoArray });
+      const allGroupInfoArray = groups.map((group) => {
+        const groupRelationshipArray = userGroupsJoin.filter((ug) => ug.group_id === group.id);
+        const userInfoArray = groupRelationshipArray.map((groupRelationship) => users.find((user) => user.id === groupRelationship.user_id));
+        return { ...group, users: userInfoArray };
       });
-      console.warn(allGroupInfoArray);
       resolve(allGroupInfoArray);
     }).catch((error) => reject(error));
 });
 
 export default groupsWithUsers;
+
+// THIS IS THE LONG WAY OF DOING IT!
+
+// const groupsWithUsers = () => new Promise((resolve, reject) => {
+//   // COMPLETE THIS FUNCTION
+//   Promise.all([getUsers(), getGroups(), getUserGroups()])
+//     .then(([users, groups, userGroupsJoin]) => {
+//       const allGroupInfoArray = [];
+
+//       groups.forEach((group) => {
+//         const groupRelationshipArray = [];
+//         const userInfoArray = [];
+//         // push all the relationships that apply to this group
+//         // use the spread to not have an array of arrays
+//         // instead an array of objects.
+//         groupRelationshipArray.push(...userGroupsJoin.filter((ug) => ug.group_id === group.id));
+
+//         groupRelationshipArray.forEach((groupRelationship) => {
+//           userInfoArray.push(users.find((user) => user.id === groupRelationship.user_id));
+//         });
+//         allGroupInfoArray.push({ ...group, users: userInfoArray });
+//       });
+//       console.warn(allGroupInfoArray);
+//       resolve(allGroupInfoArray);
+//     }).catch((error) => reject(error));
+// });
